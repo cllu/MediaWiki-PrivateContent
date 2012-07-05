@@ -1,0 +1,8 @@
+Just want to use MediaWiki as my personal CMS system.
+
+Add the following line to LocalSettings.php
+
+$publicPages = array('Special:UserLogin', 'Main Page');
+$publicNamespaces = array(NS_BLOG);
+$publicCategories = array('Public');
+require_once("$IP/extensions/PrivateContent/PrivateContent.php");

@@ -27,40 +27,30 @@ function privateBlock($input, $args) {
 }
 
 function privatePage(&$title, &$user, $action, &$result) {
-    global $whiteListPages;
-    global $privateNamespaces;
-    global $privateCategories;
+
+    global $publicPages;
+    global $publicNamespaces;
+    global $publicCategories;
+
     // check category.
     $pageNamespace = $title->getNamespace();
     $pageCategories = array_keys($title->getParentCategories());
 
-    $isWhiteListPage = in_array($title, $whiteListPages);
-    $isInPrivateNamespace = in_array($pageNamespace, $privateNamespaces);
-    $hasPrivateCategory = false;
-    foreach ($privateCategories as $privateCategory) {
-        $privateCategory = 'Category:' + $privateCategory;
-        if (in_array($privateCategory, $pageCategories)) {
-            $hasPrivateCategory = true;
+    $isPublicPage = in_array($title, $publicPages);
+    $isInPublicNamespace = in_array($pageNamespace, $publicNamespaces);
+    $hasPublicCategory = false;
+    foreach ($publicCategories as $publicCategory) {
+        $publicCategory = 'Category:' + $publicCategory;
+        if (in_array($publicCategory, $pageCategories)) {
+            $hasPublicCategory = true;
             break;
         }
     }
-    #print_r('debug');
-    #print_r($privateNamespaces);
-    #print_r($pageNamesp);
-    #print_r($isInPrivateNamespace);
-    #exit;
-
-    if ($isWhiteListPage) {
-        // always allow white list pages.
+   
+   if ($user->isLoggedIn() || $isPublicPage || $isInPublicNamespace || $hasPublicCategory) {
         $result = true;
-    } else if ($isInPrivateNamespace && !$user->isLoggedIn()) {
-        // check category
-        $result = false;
-    } else if ($hasPrivateCategory && !$user->isLoggedIn()){
-        // check namespaces.
-        $result = false;
     } else {
-        $result = true;
+        $result = false;
     }
     return $result;
 }
